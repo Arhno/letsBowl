@@ -10,7 +10,7 @@
                 border-width: thin;
             }
             .game {
-                width: 50%;
+                width: 100%;
             }
             .frame {
                 padding-left: 10px;
@@ -26,8 +26,10 @@
                 <span flex></span>
             </div>
         </md-toolbar>
-        <bw-game-loader></bw-game-loader>
-
+        <div layout="row">
+            <bw-game-loader flex="50"></bw-game-loader>
+            <bw-game-loader flex="50"></bw-game-loader>
+        </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
         <!-- Angular Material Dependencies -->

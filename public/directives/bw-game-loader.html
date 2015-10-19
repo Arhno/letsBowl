@@ -1,7 +1,6 @@
-<md-button class="md-raised md-primary" ng-hide="imgready"><label for="fileinput">Choose File</label></md-button>
-<input id="fileinput" type="file" class="ng-hide"/>
+<md-button class="md-raised md-primary" ng-hide="imgready"><label>Choose File<input type="file" class="fileinput ng-hide"/></label></md-button>
 
-<image ng-src="{{imgsrc}}" height="250" width="500" ng-show="imgready"/>
+<image ng-src="{{imgsrc}}" width="100%" ng-show="imgready"/>
 
 <div layout="column" class="game">
     <div ng-repeat="l in score" layout="row" layout-align="end center" class="line">

@@ -11,7 +11,7 @@ angular.module('bowling')
         },
         link: function(scope, element){
             console.log(scope.imgsrc);
-            input = element.find('#fileinput');
+            input = element.find('.fileinput');
             input.on('change', function(e){
                 var file = this.files[0];
 
