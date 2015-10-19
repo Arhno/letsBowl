@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="bowling">
+    <head>
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <style type="text/css">
+            .game, .line, .frame  {
+                border-color: lightgrey;
+                border-style: solid;
+                border-width: thin;
+            }
+            .game {
+                width: 50%;
+            }
+            .frame {
+                padding-left: 10px;
+                padding-right: 10px;
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Bowling</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+        <bw-game-loader></bw-game-loader>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+        <!-- Angular Material Dependencies -->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-animate.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-aria.min.js"></script>
+
+        <!-- Angular Material Javascript now available via Google CDN; version 0.9.4 used here -->
+        <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
+
+
+        <script type="text/javascript" src="/app.js"></script>
+        <script type="text/javascript" src="/directives/bw-game-loader.js"></script>
+    </body>
+</html>

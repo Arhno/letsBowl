@@ -1,0 +1,21 @@
+<md-button class="md-raised md-primary" ng-hide="imgready"><label for="fileinput">Choose File</label></md-button>
+<input id="fileinput" type="file" class="ng-hide"/>
+
+<image ng-src="{{imgsrc}}" height="250" width="500" ng-show="imgready"/>
+
+<div layout="column" class="game">
+    <div ng-repeat="l in score" layout="row" layout-align="end center" class="line">
+        <div ng-repeat="f in l" flex="10" layout="column" class="frame">
+            <div  layout="row" layout-align="space-between center">
+                <div ng-show="{{f.balls.length == 1}}">
+                </div>
+                <div ng-repeat="b in f.balls track by $index">
+                    {{b}}
+                </div>
+            </div>
+            <div>
+                {{f.score}}
+            </div>
+        </div>
+    </div>
+</div>
