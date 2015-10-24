@@ -32,7 +32,7 @@ module ImageToScore
                 bb = OpenCV::cv::boundingRect(contours[i])
                 if bb.width >= 20 && bb.width <= 40 && bb.height >=30 && bb.height <= 100
                     ratio = (1.0*bb.width)/bb.height
-                    if (ratio >= 0.2 && ratio <= 0.5) || (ratio >= 0.55 && ratio <= 0.99)
+                    if (ratio >= 0.2 && ratio <= 0.5) || (ratio >= 0.55 && ratio <= 1.1)
                         candidates[i] = {external: contours[i], internal: []}
                     end
                 end
@@ -127,6 +127,11 @@ module ImageToScore
         end
 
         OpenCV::cv::resize(number, number, OpenCV::cv::Size.new(40, 40))
+
+        cleaned = OpenCV::cv::Mat.new
+        kernel = OpenCV::cv::Mat::ones(3, 3, OpenCV::cv::CV_8UC1)
+        OpenCV::cv::morphologyEx(number, cleaned, OpenCV::cv::MORPH_CLOSE, kernel)
+        return cleaned
 
         return number
     end
@@ -238,6 +243,7 @@ module ImageToScore
         nb_elements = line1.elements.length
         frames = []
         k = 0
+        l = 0
         for f in 0..9
             balls = []
 
@@ -280,7 +286,16 @@ module ImageToScore
                 balls << "-"
             end
 
-            frames << {balls: balls, score: line2.elements[f].number.to_i}
+            while f == 0 && (l < line2.elements.length - 1) && line2.elements[l].xmax < limits[f] - epsilon
+                l += 1
+            end
+
+            frames << {balls: balls, score: line2.elements[l].number.to_i}
+
+            l += 1
+            if l == line2.elements.length
+                l -= 1
+            end
         end
         return frames
     end
@@ -308,17 +323,43 @@ module ImageToScore
             limits << e.xmax
         end
 
+        offset = 1
+        while limits.length != 10 && offset < nb_players
+            limits = []
+            lines[index_first_player + 2*offset].elements.each do |e|
+                limits << e.xmax
+            end
+            offset += 1
+        end
+
         # Finally organize the score in a JSON-like structure
         # Add the missing 0 score ball
         espilon = 20
         all_scores = []
         for i in 0..(nb_players-1)
             j = 2*i + index_first_player - 1
-            frames = getScore(lines[j], lines[j+1], limits)
-            all_scores << frames
+            if lines[j] && lines[j+1]
+                frames = getScore(lines[j], lines[j+1], limits)
+                all_scores << frames
+            end
         end
 
         return all_scores
+    end
+
+    def printCandidates(can)
+        canImg = OpenCV::cv::Mat::zeros(1000, 2000, OpenCV::cv::CV_8UC1)
+        can.each_value do |candidate|
+            contours = OpenCV::Std::Vector::Cv_Mat.new
+            contours << candidate[:external]
+            OpenCV::cv::drawContours(canImg, contours, -1, OpenCV::cv::Scalar.new(255), -1, 8, OpenCV::cv::Mat.new, OpenCV::cv::INT_MAX)
+            for c in candidate[:internal]
+                contours = OpenCV::Std::Vector::Cv_Mat.new
+                contours << c
+                OpenCV::cv::drawContours(canImg, contours, -1, OpenCV::cv::Scalar.new(0), -1, 8, OpenCV::cv::Mat.new, OpenCV::cv::INT_MAX)
+            end
+        end
+        return canImg
     end
 
     def processImg(img)
@@ -328,11 +369,22 @@ module ImageToScore
         # OpenCV::cv::imshow("debug", resized)
         # OpenCV::cv::waitKey(10)
         bin = binarize(resized)
+
+        OpenCV::cv::imwrite("debug_bin.png", bin)
         # OpenCV::cv::imshow("debug", bin)
         # OpenCV::cv::waitKey(10)
         can = getCandidates(bin)
+
+        canImg = printCandidates(can)
+        OpenCV::cv::imwrite("debug_can.png", canImg)
+
         r = getAverageRatio(can)
         can = prune(can, r)
+
+        pruned = printCandidates(can)
+        OpenCV::cv::imwrite("debug_pruned.png", pruned)
+
+
         classifier = Ocr::Ocr.new('config/classifier.txt')
         canElement = []
 
