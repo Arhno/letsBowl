@@ -46,3 +46,4 @@ group :development do
 end
 
 gem 'ropencv'
+gem 'rails-api'
