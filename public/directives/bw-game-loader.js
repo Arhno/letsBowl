@@ -21,7 +21,7 @@ angular.module('bowling')
                         scope.imgsrc = reader.result;
                         scope.imgready = true;
                         $http.post(
-                            '/game/extract',
+                            '/api/v1/game_extracts',
                             {'image': reader.result},
                             {'headers': {
                                 'content-type': 'application/json',
